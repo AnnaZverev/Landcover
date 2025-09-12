@@ -178,7 +178,7 @@ with gr.Blocks(
     css="""
     .gradio-container {
         max-width: 1200px !important;
-        background-image: url("file=picture.png"); /* Указываем путь к фоновому изображению */
+        background-image: url("file=picture.jpg"); /* Указываем путь к фоновому изображению */
         background-size: cover; /* Растягивает изображение, чтобы покрыть всю область */
         background-position: center; /* Центрирует изображение */
         background-repeat: no-repeat; /* Не повторять изображение */
@@ -235,6 +235,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
