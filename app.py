@@ -13,25 +13,17 @@ import html
 # =======================================================================
 print("\n--- Инициализация Google Earth Engine ---")
 try:
-    # Вариант для Render.com (через Secret File)
+    # Render создаст файл по пути /etc/secrets/google_credentials.json
     secret_file_path = '/etc/secrets/google_credentials.json'
-    # Вариант для Hugging Face Spaces (через Environment Variable)
-    secret_env_var = os.environ.get('GEE_CREDENTIALS')
-
     if os.path.exists(secret_file_path):
-        print("Аутентификация через секретный файл (Render)...")
+        print("Аутентификация через секретный файл Render...")
+        # Инициализация напрямую из файла
         credentials = ee.ServiceAccountCredentials(None, key_file=secret_file_path)
         ee.Initialize(credentials=credentials)
         print("✅ Аутентификация через сервисный аккаунт GEE прошла успешно.")
-    elif secret_env_var:
-        print("Аутентификация через секрет Hugging Face...")
-        creds_json = json.loads(secret_env_var)
-        credentials = ee.ServiceAccountCredentials(creds_json['client_email'], key_data=secret_env_var)
-        ee.Initialize(credentials=credentials, project=creds_json['project_id'])
-        print("✅ Аутентификация через сервисный аккаунт GEE прошла успешно.")
     else:
-        # Резервный вариант для локального запуска (если секреты не найдены)
-        print("Секреты не найдены, попытка локальной аутентификации...")
+        # Резервный вариант для локального запуска
+        print("Секрет не найден, попытка локальной аутентификации...")
         ee.Authenticate()
         ee.Initialize(project='gen-lang-client-0605302377')
         print("✅ Локальная аутентификация и инициализация GEE прошли успешно.")
@@ -216,4 +208,5 @@ with gr.Blocks(css=".gradio-container {max-width: 1200px !important;}") as demo:
 
 # --- ЗАПУСК ПРИЛОЖЕНИЯ ---
 print("\n--- Запуск Gradio интерфейса ---")
+
 demo.launch()
