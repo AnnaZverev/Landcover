@@ -174,7 +174,29 @@ def process_and_display_maps(region_name, year1, year2, year3):
 # =======================================================================
 # ШАГ 5: Создание и запуск интерфейса Gradio
 # =======================================================================
-with gr.Blocks(css=".gradio-container {max-width: 1200px !important;}") as demo:
+with gr.Blocks(
+    css="""
+    .gradio-container {
+        max-width: 1200px !important;
+        background-image: url("file=picture.png"); /* Указываем путь к фоновому изображению */
+        background-size: cover; /* Растягивает изображение, чтобы покрыть всю область */
+        background-position: center; /* Центрирует изображение */
+        background-repeat: no-repeat; /* Не повторять изображение */
+        background-attachment: fixed; /* Фиксирует изображение при прокрутке */
+    }
+    .dark .gradio-container { /* Это для темной темы, если она активна */
+        background-image: url("file=picture.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    .gradio-container h1, .gradio-container p, .gradio-container label, .gradio-container .message {
+        color: white !important; /* Делаем текст белым, чтобы он был виден на фоне */
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Добавляем тень для лучшей читаемости */
+    }
+    """
+) as demo:
     gr.Markdown("# 🛰️ Анализ почвенного покрова")
     gr.Markdown("Выберите регион и до трёх лет для анализа. Карты будут будут показаны слева направо (от более ранних годов к более поздним).")
     with gr.Row():
@@ -213,5 +235,6 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
