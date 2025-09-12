@@ -13,5 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем остальной код приложения
 COPY . .
 
-# Указываем, какую команду запустить, когда контейнер стартует
-CMD gradio app.py --host 0.0.0.0 --port $PORT
+CMD ["python", "app.py"]
+
