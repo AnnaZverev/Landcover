@@ -179,12 +179,8 @@ with gr.Blocks(
     /* Главный контейнер */
     .gradio-container {
         max-width: 1200px !important;
-        /* ПОПЫТКА 1: Относительный путь, Gradio сам обрабатывает */
-        background-image: url("picture.jpg");
-        /* Если не сработает, попробуйте ПОПЫТКУ 2: */
-        /* background-image: url("/file/picture.jpg"); */
-        /* ИЛИ ПОПЫТКУ 3: (если изображение вдруг оказалось в папке 'static') */
-        /* background-image: url("/static/picture.jpg"); */
+        
+        background-image: url("https://raw.githubusercontent.com/AnnaZverev/Landcover/refs/heads/main/picture.jpg"); 
 
         background-size: cover;
         background-position: center;
@@ -193,7 +189,8 @@ with gr.Blocks(
     }
     /* Для темной темы */
     .dark .gradio-container {
-        background-image: url("picture.jpg"); /* Снова, попробуйте альтернативные пути, если нужно */
+        /* ИСПОЛЬЗУЕМ ТОЧНУЮ ССЫЛКУ ИЗ ВАШЕГО СКРИНШОТА */
+        background-image: url("https://raw.githubusercontent.com/AnnaZverev/Landcover/refs/heads/main/picture.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -201,8 +198,8 @@ with gr.Blocks(
     }
     /* Стили текста для читаемости */
     .gradio-container h1, .gradio-container p, .gradio-container label, .gradio-container .message, .gradio-container .gr-button {
-        color: white !important; /* Убедитесь, что текст белый */
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9); /* Более выраженная тень */
+        color: white !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
     }
     """
 ) as demo:
@@ -244,6 +241,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
