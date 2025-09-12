@@ -14,5 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Указываем, какую команду запустить, когда контейнер стартует
-# Запускаем Gradio так, чтобы он был доступен извне
-CMD ["gradio", "app.py", "0.0.0.0:7860"]
+CMD gradio app.py --host 0.0.0.0 --port $PORT
