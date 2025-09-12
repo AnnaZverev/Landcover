@@ -208,5 +208,9 @@ with gr.Blocks(css=".gradio-container {max-width: 1200px !important;}") as demo:
 
 # --- ЗАПУСК ПРИЛОЖЕНИЯ ---
 print("\n--- Запуск Gradio интерфейса ---")
+# Получаем порт из переменной окружения PORT, которую предоставляет Render.
+# Если ее нет (при локальном запуске), используем 7860 по умолчанию.
+port = int(os.environ.get('PORT', 7860))
+# Запускаем сервер, чтобы он был доступен извне контейнера
+demo.launch(server_name="0.0.0.0", server_port=port)
 
-demo.launch()
