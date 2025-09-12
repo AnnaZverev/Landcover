@@ -176,24 +176,33 @@ def process_and_display_maps(region_name, year1, year2, year3):
 # =======================================================================
 with gr.Blocks(
     css="""
+    /* Главный контейнер */
     .gradio-container {
         max-width: 1200px !important;
-        background-image: url("file=picture.jpg"); /* Указываем путь к фоновому изображению */
-        background-size: cover; /* Растягивает изображение, чтобы покрыть всю область */
-        background-position: center; /* Центрирует изображение */
-        background-repeat: no-repeat; /* Не повторять изображение */
-        background-attachment: fixed; /* Фиксирует изображение при прокрутке */
-    }
-    .dark .gradio-container { /* Это для темной темы, если она активна */
-        background-image: url("file=picture.png");
+        /* ПОПЫТКА 1: Относительный путь, Gradio сам обрабатывает */
+        background-image: url("picture.jpg");
+        /* Если не сработает, попробуйте ПОПЫТКУ 2: */
+        /* background-image: url("/file/picture.jpg"); */
+        /* ИЛИ ПОПЫТКУ 3: (если изображение вдруг оказалось в папке 'static') */
+        /* background-image: url("/static/picture.jpg"); */
+
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
     }
-    .gradio-container h1, .gradio-container p, .gradio-container label, .gradio-container .message {
-        color: white !important; /* Делаем текст белым, чтобы он был виден на фоне */
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Добавляем тень для лучшей читаемости */
+    /* Для темной темы */
+    .dark .gradio-container {
+        background-image: url("picture.jpg"); /* Снова, попробуйте альтернативные пути, если нужно */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    /* Стили текста для читаемости */
+    .gradio-container h1, .gradio-container p, .gradio-container label, .gradio-container .message, .gradio-container .gr-button {
+        color: white !important; /* Убедитесь, что текст белый */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9); /* Более выраженная тень */
     }
     """
 ) as demo:
@@ -235,6 +244,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
