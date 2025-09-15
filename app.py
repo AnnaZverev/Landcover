@@ -240,9 +240,9 @@ with gr.Blocks(
                     "Москва (тестовая область)"
                 ],
                 value="Элиста (тестовая область)")
-            year1_slider = gr.Slider(label="Год 1", minimum=2019, maximum=2025, step=1, value=2023)
+            year1_slider = gr.Slider(label="Год 1", minimum=2019, maximum=2025, step=1, value=2019)
             year2_slider = gr.Slider(label="Год 2", minimum=2019, maximum=2025, step=1, value=2021)
-            year3_slider = gr.Slider(label="Год 3", minimum=2019, maximum=2025, step=1, value=2019)
+            year3_slider = gr.Slider(label="Год 3", minimum=2019, maximum=2025, step=1, value=2023)
             submit_button = gr.Button("Сгенерировать карты", variant="primary")
             status_message = gr.Markdown()
     with gr.Row():
@@ -261,6 +261,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
