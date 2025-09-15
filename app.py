@@ -154,8 +154,8 @@ def process_and_display_maps(region_name, year1, year2, year3):
         return None, None, None, "Ошибка: модель не обучена. Проверьте логи на наличие проблем с GEE."
 
     region_info = get_region_info(region_name)
-    # ИСПРАВЛЕНО: Сортировка по убыванию (от нового к старому)
-    years = sorted(list(set([year1, year2, year3])), reverse=True)
+   
+    years = sorted(list(set([year1, year2, year3]))) #было reverse=True
     
     outputs, messages = [], []
     print(f"\n🚀 Новый запрос! Регион: {region_name}, Годы: {years}")
@@ -261,6 +261,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
