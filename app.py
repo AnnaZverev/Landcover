@@ -155,7 +155,7 @@ def process_and_display_maps(region_name, year1, year2, year3):
 
     region_info = get_region_info(region_name)
    
-    years = sorted(list(set([year1, year2, year3]))) #было reverse=True
+    years = sorted(list(set([year1, year2, year3])), reverse=True) #было reverse=True
     
     outputs, messages = [], []
     print(f"\n🚀 Новый запрос! Регион: {region_name}, Годы: {years}")
@@ -261,6 +261,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
