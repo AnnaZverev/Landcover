@@ -178,7 +178,7 @@ with gr.Blocks(
     css="""
     /* 1. Применяем фон ко всей странице, а не только к блоку приложения */
     body, gradio-app {
-        background-image: url("https://raw.githubusercontent.com/AnnaZverev/Landcover/refs/heads/main/picture.jpg");
+        background-image: url("/file=picture.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -206,6 +206,8 @@ with gr.Blocks(
     }
     """
 ) as demo:
+
+    _ = gr.Image('picture.jpg', visible=False, interactive=False)
     gr.Markdown("# 🛰️ Анализ почвенного покрова")
     gr.Markdown("Выберите регион и до трёх лет для анализа. Карты будут будут показаны слева направо (от более ранних годов к более поздним).")
     with gr.Row():
@@ -244,6 +246,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
