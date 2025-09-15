@@ -176,28 +176,31 @@ def process_and_display_maps(region_name, year1, year2, year3):
 # =======================================================================
 with gr.Blocks(
     css="""
-    /* Главный контейнер */
-    .gradio-container {
-        max-width: 1200px !important;
-        
-        background-image: url("https://raw.githubusercontent.com/AnnaZverev/Landcover/refs/heads/main/picture.jpg"); 
-
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-    /* Для темной темы */
-    .dark .gradio-container {
-        /* ИСПОЛЬЗУЕМ ТОЧНУЮ ССЫЛКУ ИЗ ВАШЕГО СКРИНШОТА */
+    /* 1. Применяем фон ко всей странице, а не только к блоку приложения */
+    body, gradio-app {
         background-image: url("https://raw.githubusercontent.com/AnnaZverev/Landcover/refs/heads/main/picture.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
+        min-height: 100vh; /* Гарантируем, что фон покроет всю высоту экрана */
     }
-    /* Стили текста для читаемости */
-    .gradio-container h1, .gradio-container p, .gradio-container label, .gradio-container .message, .gradio-container .gr-button {
+
+    /* 2. Убираем ограничение по ширине и делаем основной контейнер прозрачным */
+    .gradio-container {
+        max-width: none !important; /* УБИРАЕМ ОГРАНИЧЕНИЕ ШИРИНЫ */
+        background: transparent !important; /* Делаем фон контейнера прозрачным, чтобы видеть фон страницы */
+    }
+
+    /* 3. Для красоты и читаемости добавим полупрозрачный фон для блоков с контентом */
+    .gradio-container .gr-panel, .gradio-container .gr-form {
+        background-color: rgba(0, 0, 0, 0.4) !important; /* Черный, на 40% прозрачный */
+        border-radius: 15px !important; /* Скругляем углы */
+        border: none !important;
+    }
+
+    /* 4. Сохраняем стили для текста, чтобы он был читаемым на темном фоне */
+    .gradio-container h1, .gradio-container p, .gradio-container label, .gradio-container .message, .gradio-container .gr-button-primary {
         color: white !important;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
     }
@@ -241,6 +244,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
