@@ -129,13 +129,66 @@ def generate_classified_map(region_info, year, classifier):
     return {"center": region_info['center'], "tile_url": map_id['tile_fetcher'].url_format, "year": year}, None
 
 def create_map_iframe_html(map_data, region_name):
-    center, tile_url, year = map_data['center'], map_data['tile_url'], map_data['year']
+    """Создает HTML код одного iframe с картой Leaflet и переключателем слоев."""
+    center = map_data['center']
+    tile_url = map_data['tile_url']
+    year = map_data['year']
+
+    # Вставляем обновленный JavaScript код в HTML-шаблон
     iframe_content = f"""
-    <!DOCTYPE html><html><head><title>Карта {year}</title><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" /><script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script><style>html, body, #map {{ height: 100%; width: 100%; margin: 0; padding: 0; }}</style></head><body><div id="map"></div><script>
-        var map = L.map('map').setView([{center[0]}, {center[1]}], 12);
-        L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{ attribution: '&copy; OpenStreetMap' }}).addTo(map);
-        L.tileLayer(`{tile_url}`, {{ attribution: 'Google Earth Engine' }}).addTo(map);
-    </script></body></html>"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Карта {year}</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <style>html, body, #map {{ height: 100%; width: 100%; margin: 0; padding: 0; }}</style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            // 1. Создаем базовые слои (те, между которыми можно переключаться)
+            var osm = L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }});
+
+            var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }});
+
+            // 2. Создаем слой-наложение (тот, который можно включать/выключать)
+            // Это ваша классификация от GEE
+            var geeClassification = L.tileLayer(`{tile_url}`, {{
+                attribution: 'Google Earth Engine',
+                opacity: 0.7 // Делаем слой немного прозрачным для удобства
+            }});
+
+            // 3. Инициализируем карту и сразу добавляем слои по умолчанию
+            var map = L.map('map', {{
+                center: [{center[0]}, {center[1]}],
+                zoom: 12,
+                layers: [satellite, geeClassification] // По умолчанию показываем спутник и вашу классификацию
+            }});
+
+            // 4. Создаем объекты для контроллера слоев
+            var baseMaps = {{
+                "Спутник": satellite,
+                "Карта-схема": osm
+            }};
+
+            var overlayMaps = {{
+                "Наша классификация": geeClassification
+            }};
+
+            // 5. Добавляем контроллер слоев на карту
+            L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+        </script>
+    </body>
+    </html>
+    """
     escaped_html = html.escape(iframe_content)
     return f'<iframe srcdoc="{escaped_html}" style="width: 100%; height: 500px; border: 1px solid #ccc;"></iframe>'
 
@@ -260,6 +313,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
