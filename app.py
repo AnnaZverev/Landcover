@@ -149,32 +149,34 @@ def create_map_iframe_html(map_data, region_name):
     <body>
         <div id="map"></div>
         <script>
-            // 1. Создаем базовые слои (те, между которыми можно переключаться)
+            // 1. Создаем базовые слои
             var osm = L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }});
 
-            var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{{z}}/{{y}}/{{x}}', {{
-                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            // !!! ИСПРАВЛЕНИЕ ЗДЕСЬ: Используем спутниковый слой от Google !!!
+            var googleSatellite = L.tileLayer('https://{{s}}.google.com/vt/lyrs=s&x={{x}}&y={{y}}&z={{z}}',{{
+                maxZoom: 20,
+                subdomains:['mt0','mt1','mt2','mt3'],
+                attribution: 'Google Satellite'
             }});
 
-            // 2. Создаем слой-наложение (тот, который можно включать/выключать)
-            // Это ваша классификация от GEE
+            // 2. Создаем слой-наложение (ваша классификация)
             var geeClassification = L.tileLayer(`{tile_url}`, {{
                 attribution: 'Google Earth Engine',
-                opacity: 0.7 // Делаем слой немного прозрачным для удобства
+                opacity: 0.7
             }});
 
-            // 3. Инициализируем карту и сразу добавляем слои по умолчанию
+            // 3. Инициализируем карту и добавляем слои по умолчанию
             var map = L.map('map', {{
                 center: [{center[0]}, {center[1]}],
                 zoom: 12,
-                layers: [satellite, geeClassification] // По умолчанию показываем спутник и вашу классификацию
+                layers: [googleSatellite, geeClassification] // По умолчанию теперь спутник Google
             }});
 
             // 4. Создаем объекты для контроллера слоев
             var baseMaps = {{
-                "Спутник": satellite,
+                "Спутник Google": googleSatellite, // ИСПРАВЛЕНО ЗДЕСЬ
                 "Карта-схема": osm
             }};
 
@@ -313,6 +315,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
