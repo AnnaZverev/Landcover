@@ -191,7 +191,6 @@ def process_and_display_maps(region_name, year1, year2, year3):
     region_info = get_region_info(region_name)
     years = sorted(list(set([year1, year2, year3])))
 
-    # --- ИЗМЕНЕНИЯ ЗДЕСЬ ---
     outputs_html = []
     outputs_titles = []
     messages = []
@@ -199,8 +198,17 @@ def process_and_display_maps(region_name, year1, year2, year3):
     print(f"\n🚀 Новый запрос! Регион: {region_name}, Годы: {years}")
 
     for year in years:
-        # Добавляем заголовок для текущего года
-        outputs_titles.append(f"<h3 style='text-align: center;'>Карта за {year} год</h3>")
+
+        # Добавляем новый, стилизованный заголовок (только год)
+        style = (
+            "font-family: 'Montserrat', sans-serif; "
+            "color: white; "
+            "font-size: 2.5em; " # Увеличиваем размер (em - относительно базового)
+            "font-weight: 700; " # Делаем жирным
+            "text-align: center; "
+            "text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);" # Добавляем тень для читаемости
+        )
+        outputs_titles.append(f"<h1 style='{style}'>{year}</h1>")
         
         map_data, msg = generate_classified_map(region_info, year, gee_classifier)
         if map_data:
@@ -332,6 +340,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
