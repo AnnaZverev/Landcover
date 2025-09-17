@@ -239,12 +239,8 @@ def process_and_display_maps(region_name, year1, year2, year3):
 # =======================================================================
 # ШАГ 5: Создание и запуск интерфейса Gradio
 # =======================================================================
-
 with gr.Blocks(
     css="""
-    /* 1. ИМПОРТИРУЕМ ШРИФТ MONTSERRAT С GOOGLE FONTS */
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
     /*
        Этот CSS использует самый надежный метод:
        1. Фон применяется ко всей странице (body).
@@ -253,15 +249,15 @@ with gr.Blocks(
        4. Контейнеры приложения делаются прозрачными, чтобы фон был виден.
     */
     body, gradio-app {
-        /* ПРИМЕНЯЕМ НОВЫЙ ШРИФТ КО ВСЕМУ ПРИЛОЖЕНИЮ */
-        font-family: 'Montserrat', sans-serif !important;
-        
+        /* Используем вашу точную ссылку и добавляем !important для надежности */
         background-image: url("https://raw.githubusercontent.com/AnnaZverev/Landcover/refs/heads/main/picture.jpg") !important;
         background-size: cover !important;
         background-position: center !important;
         background-repeat: no-repeat !important;
         background-attachment: fixed !important;
         min-height: 100vh;
+        /* Применяем новый шрифт ко всему приложению */
+        font-family: 'Montserrat', sans-serif !important;
     }
 
     /* Убираем ограничение по ширине и делаем основной контейнер прозрачным */
@@ -285,25 +281,25 @@ with gr.Blocks(
     }
 
 
-    /* Обновляем стили для текста, чтобы он был читаемым и использовал новый шрифт */
+    /* Сохраняем стили для текста, чтобы он был читаемым */
     .gradio-container h1, .gradio-container p, .gradio-container label, .gradio-container .message, .gradio-container .gr-button {
-        font-family: 'Montserrat', sans-serif !important; /* ДУБЛИРУЕМ ДЛЯ НАДЕЖНОСТИ */
+        font-family: 'Montserrat', sans-serif !important; /* Дублируем для надежности */
         color: white !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
     """
 ) as demo:
-
-
-    _ = gr.Image('picture.jpg', visible=False, interactive=False)
+    # --- Здесь ваш обычный код интерфейса, он не меняется ---
     gr.Markdown("# 🛰️ Анализ почвенного покрова")
-    gr.Markdown("Выберите регион и до трёх лет для анализа. Карты будут показаны слева направо (от более раннего года к более позднему).")
+    gr.Markdown("Выберите регион и до трёх лет для анализа. Карты будут показаны слева направо (от более ранних годов к более поздним).")
+
     with gr.Row():
-        region_dropdown = gr.Dropdown(
+        with gr.Column(scale=1):
+            region_dropdown = gr.Dropdown(
                 label="Регион",
                 choices=[
-                    "Ростовская область (Цимлянский вдхр.)",
-                    "Волгоградская область (Цимлянское вдхр.)", 
+                    "Ростовская область (Цимлянское вдхр.)",
+                    "Волгоградская область (Цимлянское вдхр.)",
                     "Челябинская область (озеро Чебаркуль)",
                     "Москва (агломерация)"
                 ],
@@ -314,6 +310,7 @@ with gr.Blocks(
             year3_slider = gr.Slider(label="Год 3", minimum=2019, maximum=2025, step=1, value=2023)
             submit_button = gr.Button("Сгенерировать карты", variant="primary")
             status_message = gr.Markdown()
+
     with gr.Row():
         with gr.Column():
             map1_title = gr.Markdown()
@@ -325,7 +322,6 @@ with gr.Blocks(
             map3_title = gr.Markdown()
             map3_output = gr.HTML()
 
-    
     submit_button.click(
         fn=process_and_display_maps,
         inputs=[region_dropdown, year1_slider, year2_slider, year3_slider],
@@ -344,6 +340,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
