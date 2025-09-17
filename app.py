@@ -185,25 +185,43 @@ def create_map_iframe_html(map_data, region_name):
 def process_and_display_maps(region_name, year1, year2, year3):
     """Основная функция, вызываемая Gradio."""
     if not gee_classifier:
-       
-        return None, None, None, "Ошибка: модель не обучена. Проверьте логи на наличие проблем с GEE."
+        # Возвращаем 7 пустых значений в случае ошибки
+        return None, None, None, None, None, None, "Ошибка: модель не обучена."
 
     region_info = get_region_info(region_name)
-   
-    years = sorted(list(set([year1, year2, year3]))) #было reverse=True
-    
-    outputs, messages = [], []
+    years = sorted(list(set([year1, year2, year3])))
+
+    # --- ИЗМЕНЕНИЯ ЗДЕСЬ ---
+    outputs_html = []
+    outputs_titles = []
+    messages = []
+
     print(f"\n🚀 Новый запрос! Регион: {region_name}, Годы: {years}")
+
     for year in years:
+        # Добавляем заголовок для текущего года
+        outputs_titles.append(f"<h3 style='text-align: center;'>Карта за {year} год</h3>")
+        
         map_data, msg = generate_classified_map(region_info, year, gee_classifier)
-        if map_data: outputs.append(create_map_iframe_html(map_data, region_name))
-        else: outputs.append(f"<p style='text-align:center; padding-top: 200px;'>{msg}</p>")
-        if msg: messages.append(msg)
-    
-    while len(outputs) < 3: outputs.append(None)
-    
+        if map_data:
+            outputs_html.append(create_map_iframe_html(map_data, region_name))
+        else:
+            outputs_html.append(f"<p style='text-align:center; padding-top: 200px;'>{msg}</p>")
+        if msg:
+            messages.append(msg)
+
+    # Дополняем списки пустыми значениями, если выбрано меньше 3 лет
+    while len(outputs_html) < 3:
+        outputs_html.append(None)
+        outputs_titles.append(None)
+
     final_message = "✅ Готово. " + " ".join(messages)
-    return outputs[0], outputs[1], outputs[2], final_message
+    
+    # Возвращаем 7 значений: Заголовок1, Карта1, Заголовок2, Карта2, и т.д.
+    return outputs_titles[0], outputs_html[0], \
+           outputs_titles[1], outputs_html[1], \
+           outputs_titles[2], outputs_html[2], \
+           final_message
 
 
 # =======================================================================
@@ -285,13 +303,27 @@ with gr.Blocks(
             submit_button = gr.Button("Сгенерировать карты", variant="primary")
             status_message = gr.Markdown()
     with gr.Row():
-        map1_output = gr.HTML()
-        map2_output = gr.HTML()
-        map3_output = gr.HTML()
+        with gr.Column():
+            map1_title = gr.Markdown()
+            map1_output = gr.HTML()
+        with gr.Column():
+            map2_title = gr.Markdown()
+            map2_output = gr.HTML()
+        with gr.Column():
+            map3_title = gr.Markdown()
+            map3_output = gr.HTML()
+
+    
     submit_button.click(
         fn=process_and_display_maps,
         inputs=[region_dropdown, year1_slider, year2_slider, year3_slider],
-        outputs=[map1_output, map2_output, map3_output, status_message])
+        outputs=[
+            map1_title, map1_output,
+            map2_title, map2_output,
+            map3_title, map3_output,
+            status_message
+        ]
+    )
 
 # --- ЗАПУСК ПРИЛОЖЕНИЯ ---
 print("\n--- Запуск Gradio интерфейса ---")
@@ -300,6 +332,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
