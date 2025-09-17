@@ -84,9 +84,9 @@ train_classifier()
 def get_region_info(region_name):
     """Возвращает координаты и BBOX для выбранного региона."""
     regions = {
-        "Волгоградская область (озеро Цаца)": {
-            "center": [48.17881, 44.65112],
-            "bbox": [44.40, 48.02, 44.90, 48.32]
+        "Волгоградская область (Зеленый)": {
+            "center": [48.1788147, 44.6511183],
+            "bbox": [44.40, 48.02, 44.90, 48.32] # Широкий обзор
         },
         "Челябинская область (озеро Чебаркуль)": {
             "center": [54.96, 60.32],
@@ -98,7 +98,7 @@ def get_region_info(region_name):
         }
     }
     return regions.get(region_name)
-
+    
 def generate_classified_map(region_info, year, classifier):
     if not classifier: return None, "Ошибка: Классификатор не обучен."
     print(f"-- Запрос на генерацию карты для {year} года...")
@@ -273,11 +273,11 @@ with gr.Blocks(
             region_dropdown = gr.Dropdown(
                 label="Регион",
                 choices=[
-                    "Волгоградская область (озеро Цаца)",
+                    "Волгоградская область (Зеленый)",
                     "Челябинская область (озеро Чебаркуль)",
                     "Москва (агломерация)"
                 ],
-                value="Челябинская область (озеро Чебаркуль)" # значение по умолчанию
+                value="Челябинская область (озеро Чебаркуль)" # Значение по умолчанию
             )
             year1_slider = gr.Slider(label="Год 1", minimum=2019, maximum=2025, step=1, value=2019)
             year2_slider = gr.Slider(label="Год 2", minimum=2019, maximum=2025, step=1, value=2021)
@@ -300,6 +300,7 @@ print("\n--- Запуск Gradio интерфейса ---")
 port = int(os.environ.get('PORT', 7860))
 # Запускаем сервер, чтобы он был доступен извне контейнера
 demo.launch(server_name="0.0.0.0", server_port=port)
+
 
 
 
